@@ -323,7 +323,7 @@ zstyle ':omz:update' mode auto      # update automatically without asking
 
 **Uncomment this line and change to 5 days**
 
-```bash hl_loines='2'
+```bash hl_lines='2'
 # Uncomment the following line to change how often to auto-update (in days).
 zstyle ':omz:update' frequency 5
 ```
@@ -373,11 +373,9 @@ if [[ -n $SSH_CONNECTION ]]; then
 
 ----------------------------------------------------------------
 
-It shows that I connected from `192.168l.10.143 port 40074` to the remote server at `192.168.10.127 port 22`.
-
 This will make `nano` the default editor when you open a file over ssh and the [micro text editor](https://github.com/micro-editor/micro) the default editor locally. If you haven't installed `micro`, use the editor of your choice. I have recently started using the [Fresh cli text editor](https://github.com/sinelaw/fresh).
 
-For example, to use `nano` the line would be `export EDITOR='nano'`
+For example, to use `fresh` the line would be `export EDITOR='fresh'`
 
 ----------------------------------------------------------------
 
@@ -389,6 +387,8 @@ Here is the output of $SSH_CONNECTION while when I was connected to a remote ser
 echo $SSH_CONNECTION
 192.168.10.143 40074 192.168.10.127 22
 ```
+
+It shows that I connected from `192.168l.10.143 port 40074` to the remote server at `192.168.10.127 port 22`.
 
 ----------------------------------------------------------------
 
