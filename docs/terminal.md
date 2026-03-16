@@ -393,7 +393,6 @@ Scroll down a little further to the `# Example aliases` section. Add this
 
 ```bash
 alias _='sudo '
-alias bat='batcat'
 ```
 
  after the line `# alias ohmyzsh="mate ~/.oh-my-zsh"`
