@@ -392,7 +392,7 @@ The code that we added has two aliases:
 Scroll down a little further to the `# Example aliases` section. Add this
 
 ```bash
-_='sudo '
+alias _='sudo '
 alias bat='batcat'
 ```
 
