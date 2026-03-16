@@ -373,13 +373,26 @@ if [[ -n $SSH_CONNECTION ]]; then
 
 ----------------------------------------------------------------
 
-This will make `nano` the default editor when you open a file over ssh and [micro text editor](https://github.com/micro-editor/micro) the default editor locally. If you haven't installed `micro`, use the editor of your choice. I have recently started using the [Fresh cli text editor](https://github.com/sinelaw/fresh).
+It shows that I connected from `192.168l.10.143 port 40074` to the remote server at `192.168.10.127 port 22`.
+
+This will make `nano` the default editor when you open a file over ssh and the [micro text editor](https://github.com/micro-editor/micro) the default editor locally. If you haven't installed `micro`, use the editor of your choice. I have recently started using the [Fresh cli text editor](https://github.com/sinelaw/fresh).
 
 For example, to use `nano` the line would be `export EDITOR='nano'`
 
-Then add the following after the `preferred editor` section:
+----------------------------------------------------------------
+
+The `if [[ -n $SSH_CONNECTION ]]; then` statement means "Evaluate the string $SSH_CONNECTION and if it's a non zero length then execute the next line. If it's zero length execute the line after `else`.
+
+Here is the output of $SSH_CONNECTION while when I was connected to a remote server:
+
+```bash linenums='1' hl_lines='1'
+echo $SSH_CONNECTION
+192.168.10.143 40074 192.168.10.127 22
+```
 
 ----------------------------------------------------------------
+
+Then add the following after the `preferred editor` section:
 
 ```bash
 # open ~/.zshrc in using the default editor specified in $EDITOR
