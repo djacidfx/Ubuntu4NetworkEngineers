@@ -258,6 +258,19 @@ Before you scream Oh My Zsh! please look over the ~/.zshrc file to select plugin
 
 ----------------------------------------------------------------
 
+## Update the zsh config file
+
+Once oh-my-zsh is installed we need to edit the configuration file.
+
+Open the `.zshrc` file using one of the following methods:
+
+- Terminal - `nano ~/.zshrc`
+- GUI - `gnome-text-editor ~/.zshrc`
+
+Follow the instructions below to update the configuration file.
+
+----------------------------------------------------------------
+
 ### zsh Themes
 
 Oh My ZSH offers a lot of themes. I found one that I really like called duellj. To install it, open the .zshrc file using `nano ~/.zshrc`and change the ZSH-THEME line to:
@@ -284,8 +297,6 @@ $
 
 You can find all of the themes here: [zsh themes](https://github.com/ohmyzsh/ohmyzsh/wiki/Themes)
 
-Don't forget to update `.zshrc` with `sc` in a terminal.
-
 ----------------------------------------------------------------
 
 ### Enable Auto Correction
@@ -303,7 +314,7 @@ ENABLE_CORRECTION="true"
 
 Search for this section and uncomment `zstyle ':omz:update' mode auto`:
 
-```text
+```bash hl_lines='3'
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
 zstyle ':omz:update' mode auto      # update automatically without asking
@@ -312,7 +323,7 @@ zstyle ':omz:update' mode auto      # update automatically without asking
 
 **Uncomment this line and change to 5 days**
 
-```bash
+```bash hl_loines='2'
 # Uncomment the following line to change how often to auto-update (in days).
 zstyle ':omz:update' frequency 5
 ```
@@ -320,11 +331,6 @@ zstyle ':omz:update' frequency 5
 ----------------------------------------------------------------
 
 ### Install  plugins
-
-Open the `.zshrc` file using one of the following methods:
-
-- Terminal - `nano ~/.zshrc`
-- GUI - `gnome-text-editor ~/.zshrc`
 
 Find the plugin section
 
@@ -361,13 +367,15 @@ In `bash` and `zsh`, lines that start with the `#` symbol are comments.
 if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='nano'
  else
-   export EDITOR='subl'
+   export EDITOR='micro'
  fi
 ```
 
 ----------------------------------------------------------------
 
-This will make `nano` the default editor when you open a file over ssh and `sublime text` the default editor locally. If you haven't installed `sublime text` use the editor of your choice. For example, to use `nano` the line would be `export EDITOR='nano'`
+This will make `nano` the default editor when you open a file over ssh and [micro text editor](https://github.com/micro-editor/micro) the default editor locally. If you haven't installed `micro`, use the editor of your choice. I have recently started using the [Fresh cli text editor](https://github.com/sinelaw/fresh).
+
+For example, to use `nano` the line would be `export EDITOR='nano'`
 
 Then add the following after the `preferred editor` section:
 
@@ -397,7 +405,7 @@ alias _='sudo '
 
  after the line `# alias ohmyzsh="mate ~/.oh-my-zsh"`
 
-Now you can type `_` instead of `sudo`. For exmaple:
+Now you can type `_` instead of `sudo`. For example:
 
 ```bash hl_lines='1'
 _ nano /etc/netplan/91-nw-init.yaml
@@ -405,7 +413,7 @@ _ nano /etc/netplan/91-nw-init.yaml
 
 to open the `91-nw-init.yaml` file.
 
-The `alias bat='batcat'` alias will be used once we install `bat` later in this guide.
+The `alias cat='batcat'` alias will be used once we install `bat` later in this guide.
 
 ----------------------------------------------------------------
 
@@ -433,6 +441,9 @@ Now when we type `path` into the terminal we get:
 
 ```bash hl_lines="1"
  path
+ ```
+
+ ```bash title='Command Output'
 /home/linuxbrew/.linuxbrew/bin
 /home/linuxbrew/.linuxbrew/sbin
 /home/mhubbard/.local/bin
@@ -479,12 +490,19 @@ You can see that it created the parent directory `01_test`, then the `test` dire
 
 ----------------------------------------------------------------
 
-### Download the plugins
-
 Close the `~/.zshrc` file by pressing `ctrl+s`, then `ctrl+x`
 
+**Reload the configuration using `exec zsh`**
+
+Now you can type `ec` to edit the `~/.zshrc` file and `sc` to reload zsh. These two aliases will save a ton of time when you are making changes to `~/.zshrc`.
+
+Anytime that you make changes to `~/.zshrc` you have to reload the `.zshrc` configuration.
+
+----------------------------------------------------------------
+
+### Download the plugins
+
 Copy each line below, paste it into the terminal, and press [enter]:
-Copy each of these lines, paste it into the terminal and press [enter]:
 
 ```bash
 git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:=~/.oh-my-zsh/custom}/plugins/zsh-completions
@@ -501,14 +519,6 @@ git clone https://github.com/zsh-users/zsh-history-substring-search ${ZSH_CUSTOM
 ```bash
 git clone https://github.com/akarzim/zsh-docker-aliases.git  ~/.oh-my-zsh/custom/plugins/zsh-docker-aliases
 ```
-
-----------------------------------------------------------------
-
-**Reload the configuration using `exec zsh`**
-
-Now you can type `ec` to edit the `~/.zshrc` file and `sc` to reload zsh. These two aliases will save a ton of time when you are making changes to `~/.zshrc`.
-
-Anytime that you make changes to `~/.zshrc` you have to reload the `.zshrc` configuration.
 
 ----------------------------------------------------------------
 
@@ -561,18 +571,9 @@ The zsh-syntax-highlighting package is a **MUST**. It does a lot but the most im
 
 The zsh-syntax-highlighting installation instructions are [zsh highlighting installation instructions](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md).
 
-Luckily, zsh-syntax-highlighting is in the Ubuntu repository so installation of the package is simple. Here is how you would check if you weren’t sure:
+zsh-syntax-highlighting is in the Ubuntu repository so installation of the package is simple. We can install it using:
 
-```bash hl_lines="1"
-sudo apt search zsh-syntax-highlighting
-```
-
-You should see `zsh-syntax-highlighting 0.7.1-2 [Ubuntu/noble universe]`<br>
-`└── Fish shell like syntax highlighting for zsh`
-
-So now we know the package is named `zsh-syntax-highlighting`, we can install it using:
-
-```bash hl_lines="1 2"
+```bash
 sudo apt install zsh-syntax-highlighting && echo "source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ${ZDOTDIR:-$HOME}/.zshrc
 ```
 
@@ -605,7 +606,7 @@ The line in the .zshrc file they are referring to is `source /usr/share/zsh-synt
 
 ----------------------------------------------------------------
 
-#### Aliases
+### Aliases
 
 zsh includes a lot of aliases and we added more with the `git` and `docker aliases` plug-ins. To see what aliases are available, open a terminal, `ctrl+alt+t` and type:
 
@@ -857,7 +858,7 @@ brew install bat
 #### BAT configuration
 
 **Highlighting theme**
-Use `bat --list-themes` to get a list of all available themes for syntax highlighting. There are a too many to list, I chose Dracula. You can quickly test a theme you can call `bat` with the --theme=Dracula option. To permanently use the Dracula theme, set the BAT_THEME environment variable to Dracula. Use export BAT_THEME="Dracula" in your shell's startup file to make the change permanent.
+Use `bat --list-themes` to get a list of all available themes for syntax highlighting. There are a too many to list, I chose Coldark-Cold. You can quickly test a theme you can call `bat` with the --theme=Coldark-Cold option. To permanently use the Dracula theme, set the BAT_THEME environment variable to Dracula. Use export BAT_THEME="Coldark-Cold" in your shell's startup file to make the change permanent.
 
 `bat` can also be customized with a configuration file. A default configuration file can be created with the --generate-config-file option.
 
@@ -925,6 +926,14 @@ ZSH_THEME="amuse"
 # Case-sensitive completion must be off. _ and - will be interchangeable.
 # HYPHEN_INSENSITIVE="true"
 
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+
+# Uncomment the following line to change how often to auto-update (in days).
+zstyle ':omz:update' frequency 5
+
 # Uncomment the following line to disable bi-weekly auto-update checks.
 # DISABLE_AUTO_UPDATE="true"
 
@@ -936,6 +945,9 @@ ZSH_THEME="amuse"
 
 # Uncomment the following line if pasting URLs and other text is messed up.
 # DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
 
 # Uncomment the following line to disable auto-setting terminal title.
 # DISABLE_AUTO_TITLE="true"
@@ -973,9 +985,7 @@ plugins=(
     git
     zsh-completions
     zsh-autosuggestions
-    zsh-syntax-highlighting
     history-substring-search
-    aliases
     colored-man-pages
     zsh-docker-aliases
 )
@@ -993,7 +1003,7 @@ source $ZSH/oh-my-zsh.sh
 if [[ -n $SSH_CONNECTION ]]; then
    export EDITOR='gedit'
  else
-   export EDITOR='subl'
+   export EDITOR='fresh'
  fi
 
 # Compilation flags
@@ -1009,11 +1019,21 @@ if [[ -n $SSH_CONNECTION ]]; then
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 # alias python=python3
 # alias pip=pip3
+alias _='sudo '
+
+# Call system ping instead of the brew installed ping
+alias ping='/usr/bin/ping "$@"'
+
+# Call system curl instead of the brew installed curl
+alias curl='/usr/bin/curl "$@"'
 
 # open ~/.zshrc in using the default editor specified in $EDITOR
 alias ec="$EDITOR $HOME/.zshrc"
 # rerun ~/.zshrc after making changes
 alias sc="exec zsh"
+
+# VS Code Flatpak alias (Wayland-friendly)
+alias code="flatpak run com.visualstudio.code"
 
 eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 
@@ -1022,7 +1042,42 @@ eval "$(zoxide init zsh)"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # Configure fzf
-eval "$(fzf --zsh)"
+# eval "$(fzf --zsh)"
+source <(fzf --zsh)
+
+# onefetch git repository greeter
+last_repository=
+check_directory_for_new_repository() {
+ current_repository=$(git rev-parse --show-toplevel 2> /dev/null)
+
+ if [ "$current_repository" ] && \
+    [ "$current_repository" != "$last_repository" ]; then
+  onefetch
+ fi
+ last_repository=$current_repository
+}
+cd() {
+ builtin cd "$@"
+ check_directory_for_new_repository
+}
+
+# optional, great also when opening shell directly in repository directory
+# adds time to startup
+check_directory_for_new_repository
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Set bat color them to Coldark-Cold
+export BAT_THEME="Coldark-Cold"
+
+# Tailspin Aliases
+alias t-samba='sudo tail -f /var/log/samba/log.smbd | tspin'
+alias t-ssh='sudo tail -f /var/log/auth.log | tspin'
+alias t-cockpit='sudo journalctl -u cockpit -f | tspin'
+alias t-health='sudo journalctl -u smbd -u ssh -u cockpit -f | tspin'
+
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 ```
 
 ----------------------------------------------------------------
@@ -1043,3 +1098,4 @@ eval "$(fzf --zsh)"
 - [Modern replacements for Unix tools](https://github.com/ibraheemdev/modern-unix) - a git repo full of modern replacement tools
 - [A list of new-ish terminal tools](https://jvns.ca/blog/2022/04/12/a-list-of-new-ish--command-line-tools/)
 - [Micro Text Editor](https://micro-editor.github.io/) - a modern and intuitive terminal-based text editor
+- [Fresh cli text editor](https://github.com/sinelaw/fresh) - `curl https://raw.githubusercontent.com/sinelaw/fresh/refs/heads/master/scripts/install.sh | sh`
