@@ -908,6 +908,16 @@ The configuration file is a simple list of command line arguments. Use `bat --he
 --map-syntax "*.ino:C++"
 ```
 
+You can also just export a variable in the `.zshrc` file to set the bat theme. In my `.zshrc` file I have one theme for white backgrounds and one for dark backgrounds.
+
+```bash
+# Set bat color theme to Coldark-Cold for white terminals
+#export BAT_THEME="Coldark-Cold"
+
+# Set bat color theme to zenburn for dark terminals
+export BAT_THEME="zenburn"
+```
+
 ----------------------------------------------------------------
 
 ### Hubbard's .zshrc file
@@ -1081,8 +1091,11 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# Set bat color them to Coldark-Cold
-export BAT_THEME="Coldark-Cold"
+# Set bat color theme to Coldark-Cold for white terminals
+#export BAT_THEME="Coldark-Cold"
+
+# Set bat color theme to zenburn for dark terminals
+export BAT_THEME="zenburn"
 
 # Tailspin Aliases
 alias t-samba='sudo tail -f /var/log/samba/log.smbd | tspin'
