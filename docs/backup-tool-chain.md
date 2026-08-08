@@ -17,7 +17,7 @@ You need to get back up to speed quickly, you don't want to start from scratch r
 
 ## The theory
 
-1. Use the Free Open Source Software (FOSS) **Clonezilla** to create an image on an external drive. Download Clonezilla [Here:](https://clonezilla.org/downloads.php). Select the `stable` link. The page will update to the `Downloads` page. Select the following:
+1. Use the Free Open Source Software (FOSS) **Clonezilla** to create an image on an external drive. [Download Clonezilla Here:](https://clonezilla.org/downloads.php){: target="_blank" rel="noopener" }. Select the `stable` link. The page will update to the `Downloads` page. Select the following:
 
 ----------------------------------------------------------------
 
@@ -27,7 +27,7 @@ You need to get back up to speed quickly, you don't want to start from scratch r
 
 ### Make a bootable flash drive
 
-Then use [Impression](CH02-Install-Tools.md/#gnome-circle-apps) to create a bootable flash drive. Reboot into the flash drive and follow the onscreen instructions. You can find the Clonezilla live Docs [Here:](https://clonezilla.org/clonezilla-live-doc.php){: target="_blank" rel="noopener" }
+Then use [Impression](CH02-Install-Tools.md/#gnome-circle-apps){: target="_blank" rel="noopener" } to create a bootable flash drive. Reboot into the flash drive and follow the onscreen instructions. You can find the [Clonezilla live Docs Here:](https://clonezilla.org/clonezilla-live-doc.php){: target="_blank" rel="noopener" }
 
 ----------------------------------------------------------------
 
@@ -56,6 +56,7 @@ Your br0 bridge on enp60s0, the VLAN 10/11 split, and all those `90-NM-*` custom
 Reference only, since the ubuntu.sources codename changes on 26.04.
 
 #### libvirt VM XML
+
 Dumps the definition for your Ubuntu-24.04-LegacySSH VM (and any others) so you can `virsh define` them back. But the loud warning: **the qcow2 disk images live on the 2TB drive you're wiping.** The XML is tiny; the disks aren't.
 
 ----------------------------------------------------------------
@@ -230,12 +231,12 @@ To use the script
 - change to the home directory `cd ~`
 - `touch system-manifest.sh`
 - nano system-manifest.sh
-- Copy the code below and paste it into nano
+- Copy the code below and paste it into nano. Use the icon on the right side of the code block on the line with `#!/usr/bin/env bash`.
 - Save and exit - `ctrl-s`, `ctrl-x`
 - Make the script executable - `chmod +x system-manifest.sh`
 - Run the script, follow the instructions above
 
-```bash linenums='1' hl_lines='1'
+```bash linenums='1'
 #!/usr/bin/env bash
 # ============================================================================
 # system-manifest.sh
