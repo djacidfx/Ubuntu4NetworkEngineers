@@ -1,6 +1,6 @@
 # Backup your toolchain
 
-If you are a network engineer you will undoubted install many tools using:
+If you are a network engineer you will undoubtedly install many tools using:
 
 - homebrew
 - apt
@@ -11,11 +11,13 @@ If you want to:
 
 - reinstall Ubuntu and overwrite your current setup
 - spin up a new laptop
-- or you laptop is stolen
+- or your laptop is stolen
+
+You need to get back up to speed quickly, you don't want to have to start from scratch remembering what you installed over time. Claude wrote a shell script for me when I was migrating from Ubuntu 25.04 to 26.04. I wanted do to a fresh install so that I got Dracut as the Init system.
 
 ## The theory
 
-Use the Free Open Source Software (FOOS) Clonezilla to create an image on an external drive. Download Clonezilla [Here:](https://clonezilla.org/downloads.php). Select the `stable` link. The page will update to the `Downloads` page. Select the following:
+1. Use the Free Open Source Software (FOOS) Clonezilla to create an image on an external drive. Download Clonezilla [Here:](https://clonezilla.org/downloads.php). Select the `stable` link. The page will update to the `Downloads` page. Select the following:
 
 ----------------------------------------------------------------
 
@@ -23,11 +25,17 @@ Use the Free Open Source Software (FOOS) Clonezilla to create an image on an ext
 
 ----------------------------------------------------------------
 
+### Make a bootable flash drive
+
 Then use [Impression](CH02-Install-Tools.md/#gnome-circle-apps) to create a bootable flash drive. Reboot into the flash drive and follow the onscreen instructions. You can find the Clonezilla live Docs [Here:](https://clonezilla.org/clonezilla-live-doc.php)
 
 ----------------------------------------------------------------
 
 The Clonezilla image is your rollback-of-last-resort; a manifest is your *actual* rebuild path — and it's better than booting back into 25.04 repeatedly, because you get a checklist you work through once instead of a system you keep context-switching into.
+
+----------------------------------------------------------------
+
+### Run the script
 
 A few design decisions worth knowing before you run it:
 
@@ -35,13 +43,22 @@ The apt capture uses `apt-mark showmanual`, not `dpkg -l`. That gives you only t
 
 Two warnings baked into the script that matter for *you* specifically: your netplan files and NetworkManager connections hold the customer WiFi profiles and their PSKs — real secrets — so those go into a clearly-marked `SENSITIVE/` subdir, and you decide whether they're allowed near Insync/Google Drive. And the output lands in `$HOME` on the drive you're about to wipe, so the script ends by reminding you to copy it *off*. That covers your list plus the things easy to forget until you're mid-rebuild and cursing. The extras I added beyond what you asked for, and why they're in there for *you* specifically:
 
-**Group memberships** (`system/groups.txt`) — the reinstall note calls out `dialout` explicitly. That's your serial-console access to Cisco gear; forget it and your USB-serial adapters won't open until you re-add yourself and log out/in. `libvirt`, `kvm`, `wireshark` are in there too.
+#### Group memberships (`system/groups.txt`)
 
-**Netplan + NetworkManager connections** — your br0 bridge on enp60s0, the VLAN 10/11 split, and all those `90-NM-*` customer WiFi profiles with their PSKs. These land in `SENSITIVE/` because they carry passwords. One firm caveat baked into the notes: don't blind-copy plucky netplan onto 26.04 — interface names usually survive but the syntax and defaults can shift, so review before applying.
+The reinstall note calls out `dialout` explicitly. That's your serial-console access to Cisco gear; forget it and your USB-serial adapters won't open until you re-add yourself and log out/in. `libvirt`, `kvm`, `wireshark` are in there too.
 
-**Your cleaned APT sources + keyrings** — captures today's work (the fixed vscode.gpg keyring, the deb822 conversions) as reference so you're not re-deriving the Microsoft key fix from scratch. Reference only, since the ubuntu.sources codename changes on 26.04.
+#### Netplan + NetworkManager connections
 
-**libvirt VM XML** — dumps the definition for your Ubuntu-24.04-LegacySSH VM (and any others) so you can `virsh define` them back. But the loud warning: **the qcow2 disk images live on the 2TB drive you're wiping.** The XML is tiny; the disks aren't.
+Your br0 bridge on enp60s0, the VLAN 10/11 split, and all those `90-NM-*` customer WiFi profiles with their PSKs. These land in `SENSITIVE/` because they carry passwords. One firm caveat baked into the notes: don't blind-copy plucky netplan onto 26.04 — interface names usually survive but the syntax and defaults can shift, so review before applying.
+
+#### APT sources + keyrings
+
+Reference only, since the ubuntu.sources codename changes on 26.04.
+
+#### libvirt VM XML
+Dumps the definition for your Ubuntu-24.04-LegacySSH VM (and any others) so you can `virsh define` them back. But the loud warning: **the qcow2 disk images live on the 2TB drive you're wiping.** The XML is tiny; the disks aren't.
+
+----------------------------------------------------------------
 
 `sudo virsh domblklist <vm>` shows their paths — copy those to the 1TB separately or that legacy-SSH runtime is gone. The KVM section does a lot more than list paths, and the extras are the ones that actually save you:
 
@@ -51,21 +68,19 @@ Two warnings baked into the script that matter for *you* specifically: your netp
 
 **It generates `copy-vm-disks.sh`** — a ready-to-run helper that rsyncs every image (chain included) to a destination you pass in, with `--sparse` so qcow2 files don't balloon and `--info=progress2` so you can watch it. De-duped, so a base image shared by two VMs copies once.
 
-Two things to flag before you run it:
+### Two things before you run it
 
 The whole output folder lands in `$HOME` on the drive you're about to wipe. The script screams about this at the end, but it bears repeating — copy it to the 1TB (or push the non-sensitive parts through `~/Insync`) before you boot the 26.04 installer. A manifest that gets wiped with the system it describes is a cruel joke.
 
 And `SENSITIVE/` holds WiFi passwords and your ssh config. If you route that folder through Insync to Google Drive, you're uploading customer WiFi PSKs to the cloud — your call, but given your line of work I'd keep that subdir on the local 1TB only, or tar+encrypt it. Private ssh keys aren't auto-copied for the same reason; handle `~/.ssh/id_*` yourself.
 
 Run it as your normal user, not under sudo — brew and gh and code all need user context, and the script sudo's itself only for the handful of `/etc` reads that require it. Give it a look before running since it touches sudo, then let me know what it caught and what came back `[skip]` — the skips sometimes point at something worth grabbing by hand.
-You need to get back up to speed quickly. Claude wrote a shell script for me when I was migrating from Ubuntu 25.04 to 26.04. I wanted do to a fresh install so that I got Dracut as the Init system.
 
 ## The workflow when you're ready to wipe
 
 - Run the script
 - Verify the size of the VM qcow2 files
 - Copy the VMs to the backup drive
-
 
 ```bash
 ./system-manifest.sh                                    # inventory
@@ -201,3 +216,18 @@ My drive is named Backup and vm-images is where I keep VM. Change the name to wh
 ```bash linenums='1' hl_lines='1'
 sudo ~/system-manifest-*/kvm/copy-vm-disks.sh /media/mhubbard/Backup/vm-images
 ```
+
+## The script
+
+Here is the `system-manifest.sh` shell script. It's also in the repo if you want to download it.
+
+To use the script
+
+- Open a terminal
+- change to the home directory `cd ~`
+- `touch system-manifest.sh`
+- nano system-manifest.sh
+- Copy the code below and paste it into nano
+- Save and exit - `ctrl-s`, `ctrl-x`
+- Make the script executable - `chmod +x system-manifest.sh`
+- Run the script, follow the instructions above
