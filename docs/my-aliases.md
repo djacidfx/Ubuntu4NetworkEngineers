@@ -4,6 +4,143 @@ If you find any aliases here that you want to use just open `~//home/mhubbard/.o
 
 ----------------------------------------------------------------
 
+## Display interface data
+
+There are two functions to display the wlan and Ethernet interfaces. The output is colorized using the following code:
+
+```bash linenums='1' hl_lines='1'
+# ===============================================================================
+# ANSI COLOR CHEAT SHEET
+# ===============================================================================
+# | Style / Color   | Code     | Example in Zsh/Bash              |
+# | --------------- | -------- | -------------------------------- |
+# | Reset All       | 0        | `\e[0m` (Crucial to clear style) |
+# | Bold / Bright   | 1;       | `\e[1;32m` (Bold Green)          |
+# | Dim / Faint     | 2;       | `\e[2;37m` (Muted/Gray text)     |
+# | Underline       | 4        | `\e[4m`                          |
+# | --------------- | -------- | -------------------------------- |
+# | Black           | 30       | `\e[30m`                         |
+# | Red             | 31       | `\e[31m`                         |
+# | Green           | 32       | `\e[32m`                         |
+# | Yellow          | 33       | `\e[33m`                         |
+# | Blue            | 34       | `\e[34m`                         |
+# | Magenta         | 35       | `\e[35m`                         |
+# | Cyan            | 36       | `\e[36m`                         |
+# | White           | 37       | `\e[37m`                         |
+# | Bright Black    | 90       | `\e[90m` (Dark Gray)             |
+# | --------------- | -------- | -------------------------------- |
+# | BG Red          | 41       | `\e[41m` (Useful for alerts)     |
+# | BG Yellow       | 43       | `\e[43m`                         |
+
+# ===============================================================================
+# COLOR HELPER DEFINITIONS
+# ===============================================================================
+# Styles
+_c_reset=$'\e[0m'
+_c_bold=$'\e[1m'
+_c_dim=$'\e[2m'
+_c_underline=$'\e[4m'
+
+# Regular Text Colors
+_c_black=$'\e[30m'
+_c_red=$'\e[31m'
+_c_green=$'\e[32m'
+_c_yellow=$'\e[33m'
+_c_blue=$'\e[34m'
+_c_magenta=$'\e[35m'
+_c_cyan=$'\e[36m'
+_c_white=$'\e[37m'
+_c_gray=$'\e[90m'
+
+# Bold / Intense Text Colors
+_c_bold_black=$'\e[1;30m'
+_c_bold_red=$'\e[1;31m'
+_c_bold_green=$'\e[1;32m'
+_c_bold_yellow=$'\e[1;33m'
+_c_bold_blue=$'\e[1;34m'
+_c_bold_magenta=$'\e[1;35m'
+_c_bold_cyan=$'\e[1;36m'
+_c_bold_white=$'\e[1;37m'
+
+# Background Colors
+_c_bg_red=$'\e[41m'
+_c_bg_yellow=$'\e[43m'
+
+# -------------------------------------------------------------------------------
+
+# Pass raw text through this to colorize network patterns
+_color_net() {
+    local iface="$1"
+    sed -E \
+        -e "s/([0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5})/${_c_yellow}\1${_c_reset}/g" \
+        -e "s/([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(\/[0-9]{1,2})?)/${_c_bold_green}\1${_c_reset}/g" \
+        -e "s/([0-9a-fA-F]{1,4}(:[0-9a-fA-F]{0,4}){2,7}(\/[0-9]{1,3})?)/${_c_magenta}\1${_c_reset}/g" \
+        -e "s/(GATEWAY)/${_c_bold_yellow}\1${_c_reset}/g" \
+        -e "s/(DNS)/${_c_bold_yellow}\1${_c_reset}/g" \
+        -e "s/(DOMAIN)/${_c_bold_yellow}\1${_c_reset}/g" \
+        -e "s/(metric [0-9]+)/${_c_dim}\1${_c_reset}/g" \
+        -e "s/\b(${iface})\b/${_c_bold_cyan}\1${_c_reset}/g"
+}
+
+# -------------------------------------------------------------------------------
+
+# red section header + separator helpers (top-level so they're
+# defined once and don't leak/redefine on every call)
+_mw_hdr() { printf "\e[31m         %s\e[0m\n\n" "$1"; }
+_mw_sep() { printf "\n---------------------\n\n"; }
+
+```
+
+To display current WiFi data
+
+Here is the function for WiFi:
+
+```bash linenums='1' hl_lines='1'
+mw-wifi() {
+    local wintf dev
+
+    # detect the wifi interface via sysfs
+    for dev in /sys/class/net/*(N); do
+        [[ -d "$dev/wireless" ]] && { wintf=${dev:t}; break; }
+    done
+
+    ip route | grep default
+    nmcli dev show $ethintf | grep -E "IP4"
+    _mw_sep
+    nmcli dev show $ethintf | grep -E "IP6"
+}
+```
+
+```bash title='Command Output'
+mw-wifi
+default via 192.168.10.253 dev wlp61s0 proto dhcp src 192.168.10.143 metric 600
+default via 192.168.1.1 dev br0 proto dhcp src 192.168.1.101 metric 1000
+IP4.ADDRESS[1]:                         192.168.10.143/24
+IP4.GATEWAY:                            192.168.10.253
+IP4.ROUTE[1]:                           dst = 192.168.10.0/24, nh = 0.0.0.0, mt = 600
+IP4.ROUTE[2]:                           dst = 0.0.0.0/0, nh = 192.168.10.253, mt = 600
+IP4.DNS[1]:                             192.168.10.222
+IP4.DOMAIN[1]:                          pu.pri
+IP6.ADDRESS[1]:                         fd24:42b2:12ce:0:8adc:f73a:86e7:3e4c/64
+IP6.ADDRESS[2]:                         fd24:42b2:12ce:0:f1:a0c8:8f6:2055/128
+IP6.ADDRESS[3]:                         fd24:42b2:12ce:0:50db:9203:b498:cd66/64
+IP6.ADDRESS[4]:                         fe80::1917:5c98:da8b:fe36/64
+IP6.GATEWAY:                            fe80::fa7b:20ff:fe34:a3c6
+IP6.ROUTE[1]:                           dst = fe80::/64, nh = ::, mt = 1024
+IP6.ROUTE[2]:                           dst = fd24:42b2:12ce::/64, nh = ::, mt = 600
+IP6.ROUTE[3]:                           dst = ::/0, nh = fe80::fa7b:20ff:fe34:a3c6, mt = 20600
+IP6.ROUTE[4]:                           dst = fd24:42b2:12ce:0:f1:a0c8:8f6:2055/128, nh = ::, mt = 600
+IP6.DNS[1]:                             fd24:42b2:12ce::1
+IP6.SEARCHES[1]:                        pu.pri
+IP4.ADDRESS[1]:                         127.0.0.1/8
+IP4.GATEWAY:                            --
+IP6.ADDRESS[1]:                         ::1/128
+IP6.GATEWAY:                            --
+
+```
+
+----------------------------------------------------------------
+
 ## Open Gnome Text Editor
 
 I use Microsoft VS Code for coding and creating markdown files. But it's pretty heavy to just edit a text file. For that I use the built in `Gnome-Text-Editor` but typing `Gnome-Text-Editor config.txt` is tiresome.
@@ -76,7 +213,7 @@ in the example, it will list the contents of `/home/mhubbard/Insync/GD/04_Tools/
 └─[$] ls `bd D`
 ```
 
-```bash hl_lines=13 title='Command Output'
+```bash title='Command Output'
 drwxrwxr-x    - mhubbard 2026-07-14 16:19  __pycache__
 drwxrwxr-x    - mhubbard 2024-01-18 16:57  bin
 drwxrwxr-x    - mhubbard 2025-07-28 09:20  CR-data
@@ -126,29 +263,59 @@ It does take effort to get `bd` into muscle memory but it will save you a lot of
 
 ----------------------------------------------------------------
 
-```bash hl_lines='2'
-# run bat instead of cat
-alias cat="bat"
-```
-
-```bash hl_lines='2'
-# gsw - run gnome-screenshot capture window
-alias gsw='gnome-screenshot -w'
-```
-
-```bash hl_lines='2'
-# gsa - run gnome-screenshot capture area
-alias gsa='gnome-screenshot -a'
-```
-
-```bash hl_lines='1'
-alias python=python3
-```
+## Display sensors on the system
 
 ```bash hl_lines='2'
 # mw-sensors - show temperatures
 alias mw-sensors='sensors'
 ```
+
+```bash linenums='1' hl_lines='1'
+mw-sensors
+```
+
+```bash title='Command Output'
+iwlwifi_1-virtual-0
+Adapter: Virtual device
+temp1:        +47.0°C
+
+ucsi_source_psy_USBC000:001-isa-0000
+Adapter: ISA adapter
+in0:           0.00 V  (min =  +0.00 V, max =  +0.00 V)
+curr1:         3.00 A  (max =  +0.00 A)
+
+BAT0-acpi-0
+Adapter: ACPI interface
+in0:          16.13 V
+curr1:       1000.00 uA
+
+coretemp-isa-0000
+Adapter: ISA adapter
+Package id 0:  +53.0°C  (high = +100.0°C, crit = +100.0°C)
+Core 0:        +53.0°C  (high = +100.0°C, crit = +100.0°C)
+Core 1:        +52.0°C  (high = +100.0°C, crit = +100.0°C)
+Core 2:        +53.0°C  (high = +100.0°C, crit = +100.0°C)
+Core 3:        +51.0°C  (high = +100.0°C, crit = +100.0°C)
+
+pch_cannonlake-virtual-0
+Adapter: Virtual device
+temp1:        +60.0°C
+
+nvme-pci-3b00
+Adapter: PCI adapter
+Composite:    +44.9°C  (low  = -273.1°C, high = +80.8°C)
+                       (crit = +84.8°C)
+Sensor 1:     +45.9°C  (low  = -273.1°C, high = +65261.8°C)
+Sensor 2:     +44.9°C  (low  = -273.1°C, high = +65261.8°C)
+
+acpitz-acpi-0
+Adapter: ACPI interface
+temp1:        +25.0°C
+```
+
+----------------------------------------------------------------
+
+## nmcli aliases
 
 ```bash hl_lines='2'
 # mw-nmcli-examples - show nmcli examples
