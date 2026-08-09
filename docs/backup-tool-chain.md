@@ -198,6 +198,7 @@ Optional tarball:
 ### Check VM qcow2 size
 
 After running the script and before reinstalling run this command to check the VM sizes.
+
 ```bash hl_lines='2'
 ┌─[mhubbard@1S1K-G5] - [~/Insync/GD/05_Ubuntu] - [9887]
 └─[$] cat ~/system-manifest-*/kvm/disk-images.txt
@@ -223,7 +224,7 @@ sudo ~/system-manifest-*/kvm/copy-vm-disks.sh /media/mhubbard/Backup/vm-images
 
 ## The script
 
-Below is the `system-manifest.sh` shell script. It's also in the repo if you want to [download](/system-manifest.sh){: target="_blank" rel="noopener" } it.
+Below is the `system-manifest.sh` shell script. It's also in the repo if you want to [download](https://github.com/rikosintie/Ubuntu4NetworkEngineers/blob/main/system-manifest.sh){: target="_blank" rel="noopener" } it.
 
 To use the script
 
