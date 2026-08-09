@@ -223,7 +223,7 @@ sudo ~/system-manifest-*/kvm/copy-vm-disks.sh /media/mhubbard/Backup/vm-images
 
 ## The script
 
-Here is the `system-manifest.sh` shell script. It's also in the repo if you want to download it.
+Below is the `system-manifest.sh` shell script. It's also in the repo if you want to [download](/system-manifest.sh){: target="_blank" rel="noopener" } it.
 
 To use the script
 
