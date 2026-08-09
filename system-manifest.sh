@@ -25,7 +25,7 @@ sec()  { printf '\n\033[1;36m=== %s ===\033[0m\n' "$1"; }
 cap()  { # cap <label> <outfile> <command...>
   local label="$1" out="$2"; shift 2
   if "$@" >"$out" 2>/dev/null; then
-    printf '  [ok]   %-28s -> %s\n' "$label" "${out#$OUTDIR/}"
+    printf '  [ok]   %-28s -> %s\n' "$label" "${out#"$OUTDIR"/}"
   else
     printf '  [skip] %-28s (not present / no output)\n' "$label"
     rm -f "$out"
@@ -35,7 +35,7 @@ copy() { # copy <label> <src> <destdir>
   local label="$1" src="$2" dest="$3"
   if [ -e "$src" ]; then
     cp -a "$src" "$dest"/ 2>/dev/null \
-      && printf '  [ok]   %-28s -> %s\n' "$label" "${dest#$OUTDIR/}/" \
+      && printf '  [ok]   %-28s -> %s\n' "$label" "${dest#"$OUTDIR"/}/" \
       || printf '  [warn] %-28s (copy failed)\n' "$label"
   else
     printf '  [skip] %-28s (not found)\n' "$label"

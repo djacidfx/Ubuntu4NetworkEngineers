@@ -264,7 +264,7 @@ sec()  { printf '\n\033[1;36m=== %s ===\033[0m\n' "$1"; }
 cap()  { # cap <label> <outfile> <command...>
   local label="$1" out="$2"; shift 2
   if "$@" >"$out" 2>/dev/null; then
-    printf '  [ok]   %-28s -> %s\n' "$label" "${out#$OUTDIR/}"
+    printf '  [ok]   %-28s -> %s\n' "$label" "${out#"$OUTDIR"/}"
   else
     printf '  [skip] %-28s (not present / no output)\n' "$label"
     rm -f "$out"
@@ -274,7 +274,7 @@ copy() { # copy <label> <src> <destdir>
   local label="$1" src="$2" dest="$3"
   if [ -e "$src" ]; then
     cp -a "$src" "$dest"/ 2>/dev/null \
-      && printf '  [ok]   %-28s -> %s\n' "$label" "${dest#$OUTDIR/}/" \
+      && printf '  [ok]   %-28s -> %s\n' "$label" "${dest#"$OUTDIR"/}/" \
       || printf '  [warn] %-28s (copy failed)\n' "$label"
   else
     printf '  [skip] %-28s (not found)\n' "$label"
@@ -391,19 +391,84 @@ copy "ssh known_hosts" "$HOME/.ssh/known_hosts" "$OUTDIR/SENSITIVE"
 echo "  note: private keys NOT auto-copied. Handle ~/.ssh/id_* yourself, encrypted."
 
 # ---------------------------------------------------------------------------
-sec "KVM / libvirt  (VM definitions — NOT disk images)"
+sec "KVM / libvirt  (VM definitions + disk image paths)"
+# sudo so we hit qemu:///system where your VMs live. Plain user virsh talks to
+# qemu:///session and would list NONE of your system VMs.
+VIRSH="sudo virsh"
 if have virsh; then
-  virsh list --all > "$OUTDIR/kvm/vms.txt" 2>/dev/null && echo "  [ok]   VM list -> kvm/vms.txt"
-  for vm in $(virsh list --all --name 2>/dev/null); do
-    [ -n "$vm" ] && virsh dumpxml "$vm" > "$OUTDIR/kvm/$vm.xml" 2>/dev/null \
-      && echo "  [ok]   dumpxml $vm"
+  $VIRSH list --all > "$OUTDIR/kvm/vms.txt" 2>/dev/null && echo "  [ok]   VM list -> kvm/vms.txt"
+
+  : > "$OUTDIR/kvm/disk-copy-list.txt"
+  printf '%-28s %-12s %-9s %s\n' "VM" "TARGET" "SIZE" "SOURCE (chain member)" \
+    > "$OUTDIR/kvm/disk-images.txt"
+
+  for vm in $($VIRSH list --all --name 2>/dev/null); do
+    [ -n "$vm" ] || continue
+    $VIRSH dumpxml "$vm" > "$OUTDIR/kvm/$vm.xml" 2>/dev/null && echo "  [ok]   dumpxml $vm"
+
+    # file-backed disks only (skip cdroms and empty slots)
+    $VIRSH domblklist "$vm" --details 2>/dev/null \
+      | awk 'NR>2 && $1=="file" && $2=="disk" && $4!="-" {print $3" "$4}' \
+      | while read -r target src; do
+          [ -n "$src" ] || continue
+          # Walk the backing chain so a flattened/overlay image never gets
+          # separated from its base — copying only the overlay = dead VM.
+          members=""
+          if have qemu-img; then
+            members=$(sudo qemu-img info --backing-chain "$src" 2>/dev/null \
+                       | awk -F': ' '/^image:/{print $2}')
+          fi
+          [ -n "$members" ] || members="$src"
+          n=0
+          while read -r member; do
+            [ -n "$member" ] || continue
+            sz=$(sudo du -h "$member" 2>/dev/null | cut -f1)
+            tag="$target"; [ "$n" -gt 0 ] && tag="$target~base$n"
+            printf '%-28s %-12s %-9s %s\n' "$vm" "$tag" "${sz:-?}" "$member" \
+              >> "$OUTDIR/kvm/disk-images.txt"
+            echo "$member" >> "$OUTDIR/kvm/disk-copy-list.txt"
+            n=$((n+1))
+          done <<< "$members"
+        done
   done
-  virsh net-list --all > "$OUTDIR/kvm/networks.txt" 2>/dev/null
-  for net in $(virsh net-list --all --name 2>/dev/null); do
-    [ -n "$net" ] && virsh net-dumpxml "$net" > "$OUTDIR/kvm/net-$net.xml" 2>/dev/null
+
+  # De-dup shared backing files across VMs
+  sort -u "$OUTDIR/kvm/disk-copy-list.txt" -o "$OUTDIR/kvm/disk-copy-list.txt"
+  echo "  [ok]   disk image report -> kvm/disk-images.txt"
+  echo "  [ok]   copy list         -> kvm/disk-copy-list.txt"
+
+  # libvirt networks
+  $VIRSH net-list --all > "$OUTDIR/kvm/networks.txt" 2>/dev/null
+  for net in $($VIRSH net-list --all --name 2>/dev/null); do
+    [ -n "$net" ] && $VIRSH net-dumpxml "$net" > "$OUTDIR/kvm/net-$net.xml" 2>/dev/null
   done
-  echo "  !! qcow2 DISK IMAGES are large and live on the drive you will wipe."
-  echo "     Copy them separately — check: virsh domblklist <vm>"
+
+  # Total footprint so you know if it fits on the 1TB before you start
+  if [ -s "$OUTDIR/kvm/disk-copy-list.txt" ]; then
+    total=$(sudo du -ch $(cat "$OUTDIR/kvm/disk-copy-list.txt") 2>/dev/null | tail -1 | cut -f1)
+    echo "  >> Total VM disk data to copy off: ${total:-unknown}"
+  fi
+
+  # Ready-to-run helper that copies every image (chain included) to a target dir
+  cat > "$OUTDIR/kvm/copy-vm-disks.sh" <<'CPEOF'
+#!/usr/bin/env bash
+# Copy all VM disk images (including backing files) off before you wipe.
+# Usage: sudo ./copy-vm-disks.sh /media/mhubbard/Backup/vm-images
+set -euo pipefail
+DEST="${1:?usage: copy-vm-disks.sh <dest-dir>}"
+mkdir -p "$DEST"
+LIST="$(dirname "$0")/disk-copy-list.txt"
+while read -r img; do
+  [ -n "$img" ] || continue
+  echo ">> $img"
+  rsync -ah --info=progress2 --sparse "$img" "$DEST/"
+done < "$LIST"
+echo "Done -> $DEST"; ls -lh "$DEST"
+CPEOF
+  chmod +x "$OUTDIR/kvm/copy-vm-disks.sh"
+  echo "  [ok]   copy helper       -> kvm/copy-vm-disks.sh"
+  echo "  !! Disk images live on the drive you will wipe. Run:"
+  echo "        sudo $OUTDIR/kvm/copy-vm-disks.sh /media/mhubbard/Backup/vm-images"
 fi
 
 # ---------------------------------------------------------------------------
