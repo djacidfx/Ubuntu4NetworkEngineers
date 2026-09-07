@@ -201,13 +201,13 @@ The `Fonts` application lists every font available on your system. For coding, I
 The `Clocks` application is useful if you work with teams in different time zones. You can add clocks from any time zone in the world. Also included are an Alarm, Stopwatch, amd Timer. It's very similar to the clocks app on Apple IOS. To open, tap the `Super` key, type `clocks` and press enter.
 
 ----------------------------------------------------------------
-![screenshot](img/SystemMonitorIcon.png)
+![screenshot](img/resources.png)
 
-The `System Monitor` application is similar to the `Gnome Resources` application but not as comprehensive. It's worth looking at. Below is a screenshot of the System Monitor application. To open, tap the `Super` key, type `system monitor` and press enter.
+The `Resources` application is the Gnome Resources application. Below is a screenshot of the Resources application. To open, tap the `Super` key, type `resources` and press enter.
 
 ----------------------------------------------------------------
 
-![screenshot](img/SystemMonitor.resized.png)
+![screenshot](img/resources.resized.png)
 
 ----------------------------------------------------------------
 
@@ -335,7 +335,7 @@ Ubuntu Tiling Assistant
 
 #### Clipboard Indicator
 
-There are a lot of clipboard managers out there. I went with this one because it is a Gnome extension and it had good ratings. There are installable applications available but I liked the having an extension that is managed along with the other extensions I use. As always, there are security implications when using a clipboard manager. I felt that the convenience offsets the risk, you have to decide for yourself if it's worth the risk.
+There are a lot of clipboard managers out there. I went with the Tudmotu extension because it is a Gnome extension and it had good ratings. There are installable applications available but I liked the having an extension that is managed along with the other extensions I use. As always, there are security implications when using a clipboard manager. I felt that the convenience offsets the risk, you have to decide for yourself if it's worth the risk.
 
 Here is what it looks like in use:
 
@@ -849,24 +849,47 @@ If you want to install the flatpak applications on a different machine, for exam
 flatpak list --app | sed -e "s/^[^\t]*//" -e "s/^\t/flatpak install /" -e "s/\t.*$//"
 ```
 
-Copy the lines with `flatpak install` (you can click the copy icon on the right), then paste them into terminal on the new machine.
+Copy the lines with `flatpak install` (you can click the copy icon on the right), then paste them into terminal on the new machine. There are more Flatpaks in this list than I discussed. Over time my list of "Can't live without" Flatpaks has grown!
 
 ```bash
-flatpak install cc.arduino.arduinoide
+flatpak install be.alexandervanhee.gradia
+flatpak install ch.threema.threema-web-desktop
 flatpak install com.github.PintaProject.Pinta
 flatpak install com.github.johnfactotum.Foliate
 flatpak install com.github.tchx84.Flatseal
 flatpak install com.jgraph.drawio.desktop
 flatpak install com.mattjakeman.ExtensionManager
+flatpak install com.microsoft.Edge
+flatpak install com.simplenote.Simplenote
+flatpak install com.visualstudio.code
+flatpak install de.capypara.FieldMonitor
+flatpak install de.leopoldluley.Clapgrep
+flatpak install dev.vencord.Vesktop
 flatpak install fr.rubet.rpn
+flatpak install io.github.bytezz.IPLookup
 flatpak install io.github.cboxdoerfer.FSearch
 flatpak install io.github.flattool.Warehouse
+flatpak install io.github.giantpinkrobots.flatsweep
+flatpak install io.github.nokse22.Exhibit
+flatpak install io.github.plrigaux.sysd-manager
 flatpak install io.gitlab.adhami3310.Impression
+flatpak install io.gitlab.elescoute.spacelaunch
+flatpak install io.gitlab.liferooter.TextPieces
+flatpak install it.mijorus.gearlever
+flatpak install me.iepure.devtoolbox
 flatpak install net.nokyan.Resources
 flatpak install net.werwolv.ImHex
+flatpak install org.angryip.ipscan
+flatpak install org.gnome.Extensions
 flatpak install org.gnome.baobab
+flatpak install org.gnome.gitlab.cheywood.Buffer
 flatpak install org.gnome.meld
 flatpak install org.kde.kolourpaint
+flatpak install org.recoll.recoll
+flatpak install org.remmina.Remmina
+flatpak install org.upnproutercontrol.UPnPRouterControl
+flatpak install org.videolan.VLC
+flatpak install us.zoom.Zoom
 ```
 
 ----------------------------------------------------------------
@@ -1162,17 +1185,7 @@ Gnome Resources is similar to the Windows Task Manager. Here is a [link](https:/
 
 **Installation Instructions**
 
-```bash
-flatpak install flathub net.nokyan.Resources
-```
-
-Once installed, run `Resources` from the terminal using:
-
-```bash
-flatpak run net.nokyan.Resources
-```
-
-Or by tapping the `Super` key, typing resource and clicking on the Resources icon.
+Resources is now installed by default.
 
 Here is a screenshot of the Processes tab. Just like in the Windows Task Manager, you can right click on a process and get a menu of actions to perform:
 
