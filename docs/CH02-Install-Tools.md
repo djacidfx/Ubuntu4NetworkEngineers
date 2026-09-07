@@ -360,7 +360,7 @@ Since my laptop is at customer locations most of the time, I love this extension
 
 Here are the settings I use. The :material-dots-vertical: icon in `Gnome Extensions` exposes the settings menu.
 
-![screenshot](img/Customize-Clock.resized.png)
+![screenshot](img/customize-clock.resized.png)
 
 ----------------------------------------------------------------
 
