@@ -362,6 +362,12 @@ Here are the settings I use. The :material-dots-vertical: icon in `Gnome Extensi
 
 ![screenshot](img/customize-clock.resized.png)
 
+Display the Ubuntu  release information
+
+```bash
+. /etc/os-release && echo "$NAME $VERSION"
+```
+
 ----------------------------------------------------------------
 
 ![screenshot](img/customize-clock-time.resized.png)
@@ -389,12 +395,6 @@ If you want to use the same settings for time:
 ```
 
 The week number is very popular in Europe. After I worked in France for awhile I find that I like it. In meetings you can say "in week 48 we need to accomplish the following" and everyone knows what dates you mean. There are widgets and applications for IOS and Android to show Weeks if you want to quickly see what a week number translates to on a calendar.
-
-Custom release for the Cmd Output tab
-
-```bash
-. /etc/os-release && echo "$NAME $VERSION"
-```
 
 ----------------------------------------------------------------
 
