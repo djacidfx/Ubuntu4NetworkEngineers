@@ -360,25 +360,25 @@ Since my laptop is at customer locations most of the time, I love this extension
 
 Here are the settings I use. The :material-dots-vertical: icon in `Gnome Extensions` exposes the settings menu.
 
-![screenshot](img/customize-clock.png)
+![screenshot](img/Customize-Clock.resized.png)
 
 ----------------------------------------------------------------
 
-![screenshot](img/customize-clock-time.png)
+![screenshot](img/customize-clock-time.resized.png)
 
 ----------------------------------------------------------------
 
-![screenshot](img/customize-clock-date.png)
+![screenshot](img/customize-clock-date.resized.png)
 
 ----------------------------------------------------------------
 
-![screenshot](img/customize-clock-hint.png)
+![screenshot](img/customize-clock-hint.resized.png)
 
 ----------------------------------------------------------------
 
 That puts the following text on the lock screen:
 
-![screenshot](img/lock-screen.png)
+![screenshot](img/customize-clock-lock-screen.resized.png)
 
 ----------------------------------------------------------------
 
