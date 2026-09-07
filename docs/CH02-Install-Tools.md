@@ -360,20 +360,32 @@ Since my laptop is at customer locations most of the time, I love this extension
 
 Here are the settings I use. The :material-dots-vertical: icon in `Gnome Extensions` exposes the settings menu.
 
-![screenshot](img/Customize-Clock.resized.png)
+![screenshot](img/customize-clock.png)
+
+----------------------------------------------------------------
+
+![screenshot](img/customize-clock-time.png)
+
+----------------------------------------------------------------
+
+![screenshot](img/customize-clock-date.png)
+
+----------------------------------------------------------------
+
+![screenshot](img/customize-clock-hint.png)
 
 ----------------------------------------------------------------
 
 That puts the following text on the lock screen:
 
-![screenshot](img/Lock-Screen.png)
+![screenshot](img/lock-screen.png)
 
 ----------------------------------------------------------------
 
 If you want to use the same settings for time:
 
 ```bash
-%A %B %d, %Y %H:%M:%S (%Z) - week %V
+%a %b %d, %Y %H:%M (%Z) - week %V
 ```
 
 The week number is very popular in Europe. After I worked in France for awhile I find that I like it. In meetings you can say "in week 48 we need to accomplish the following" and everyone knows what dates you mean. There are widgets and applications for IOS and Android to show Weeks if you want to quickly see what a week number translates to on a calendar.
