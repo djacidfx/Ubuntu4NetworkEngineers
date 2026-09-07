@@ -57,6 +57,8 @@ There are a lot of podcasts dedicated to Linux. In your podcast application just
 
 I have a Vizio “Smart” TV with Chromecast built in. Using the Chrome browser I can click the three dot menu on the right and select “Cast...” to send the output to the TV.
 
+In Microsoft Edge, it's under "More Tools".
+
 In VLC, select “Playback, Renderer” to send VLC’s output to the TV. I don’t have a Chromecast dongle, but I am guessing it would work the same way as the Vizio TV.
 
 ----------------------------------------------------------------
